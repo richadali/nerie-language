@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:include="layouts/adminlayout.html">
+<head>
+    <!-- Include required CSS and JS files -->
+
+</head>
+<body>
+
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+
+<div class="container-fluid" th:fragment="content">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- basic table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <h4 class="card-title">Add to Merit List</h4>
+                    </div>
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <form>
+                                    <div class="mb-3 row">
+                                        <label for="applicationNumberInput" class="col-sm-4 col-form-label">Application
+                                            Number</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="applicationNumberInput"
+                                                       placeholder="Enter Application Number">
+                                                <button type="button" class="btn btn-primary" id="getNameButton"
+                                                        onclick="onClickGetName()">Get Details
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="applicantName" class="col-sm-4 col-form-label">Applicant
+                                            Name</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" id="applicantName" placeholder="Applicant Name"
+                                                   value="" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="centerName" class="col-sm-4 col-form-label">Centre</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" id="centerName" placeholder="Centre Name"
+                                                   value="" readonly>
+                                            <input type="hidden" class="form-control" id="centerId"
+                                                   placeholder="Centre Name" value="" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="selectedTradesDropdown" class="col-sm-4 col-form-label">Trades
+                                            Selected (Preference Wise)</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-select" id="selectedTradesDropdown">
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row text-start">
+                                        <label class="col-sm-4 col-form-label">Qualifying Category</label>
+                                        <div class="col-sm-8">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="qualifyingCategory"
+                                                       id="qualifyingCategoryNA" value="N/A" checked>
+                                                <label class="form-check-label" for="qualifyingCategoryGEN">N/A</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="qualifyingCategory"
+                                                       id="qualifyingCategoryGEN" value="GEN">
+                                                <label class="form-check-label" for="qualifyingCategoryGEN">GEN</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="qualifyingCategory"
+                                                       id="qualifyingCategoryST" value="ST">
+                                                <label class="form-check-label" for="qualifyingCategoryST">ST</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="qualifyingCategory"
+                                                       id="qualifyingCategorySC" value="SC">
+                                                <label class="form-check-label" for="qualifyingCategorySC">SC</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="qualifyingCategory"
+                                                       id="qualifyingCategoryOBC" value="OBC">
+                                                <label class="form-check-label" for="qualifyingCategoryOBC">OBC</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row text-start">
+                                        <label class="col-sm-4 col-form-label">PH Category</label>
+                                        <div class="col-sm-8">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="ph" id="phYes"
+                                                       value="NO" checked>
+                                                <label class="form-check-label" for="phYes">NO</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="ph" id="phNo"
+                                                       value="YES">
+                                                <label class="form-check-label" for="phNo">YES</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary" id="add-to-merit-list-btn"> Add to
+                                            Merit List
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    function getDetails(id) {
+        console.log("inside getDetails");
+        $.ajax({
+            type: "GET",
+            url: "application_no",
+            data: "id="+id,
+            success: function (data) {
+                console.log(data);
+                $("#applicationNumber").val(data.applicationnumber);
+                $("#centerName").val(data.centers.centerName);
+                $("#centerId").val(data.centers.centerId);
+                $("#applicantName").val(data.applicantname);
+                $("#fatherName").val(data.fathername);
+                $("#motherName").val(data.mothername);
+                $("#gender").val(data.gender.genderName);
+                $("#dob").val(data.dob);
+                $("#category").val(data.categories.categoryName);
+                $("#religion").val(data.religions.religionName);
+
+                // Check if tribes object exists before accessing properties
+                if (data.tribes) {
+                    $("#tribe").val(data.tribes.tribeName);
+                } else {
+                    $("#tribe").val("N/A");
+                }
+
+                $("#maritalStatus").val(data.maritalStatus.maritalStatus);
+                $("#motherTongue").val(data.mothertongue);
+                $("#mobileNumber").val(data.mobileno);
+                $("#photograph").val(data.photograph);
+                $("#highestQualification").val(data.highestQualification.qualificationName);
+                $("#email").val(data.email);
+                $("#statePerm").val(data.states.name);
+                $("#districtPerm").val(data.districts.name);
+                $("#townPerm").val(data.townperm);
+                $("#addressPerm").val(data.addressperm);
+                $("#pincodePerm").val(data.pincodeperm);
+                $("#stateCorr").val(data.statescorr.name);
+                $("#districtCorr").val(data.districtscorr.name);
+                $("#townCorr").val(data.towncorr);
+                $("#addressCorr").val(data.addresscorr);
+                $("#pincodeCorr").val(data.pincodecorr);
+                $("#accountNumber").val(data.accountnumber);
+                $("#ifscCode").val(data.ifsccode);
+                $("#bankName").val(data.bankname);
+                $("#instituteTenth").val(data.institutetenth);
+                $("#boardTenth").val(data.boardtenth);
+                $("#yearPassingTenth").val(data.yearpassingtenth);
+                $("#percentageTenth").val(data.percentagetenth);
+                $("#divisionTenth").val(data.divisiontenth);
+                $("#subjectsTenth").val(data.subjectstenth);
+                $("#havePassedBoth").val(data.haveyoupassedboth);
+                $("#marksMaths").val(data.marksmaths);
+                $("#marksScience").val(data.marksscience);
+                $("#instituteEight").val(data.instituteeight);
+                $("#boardEight").val(data.boardeight);
+                $("#yearPassingEight").val(data.yearpassingeight);
+                $("#percentageEight").val(data.percentageeight);
+                $("#divisionEight").val(data.divisioneight);
+                $("#subjectsEight").val(data.subjectseight);
+                $("#submissionDate").val(data.submissiondatte);
+                $("#ph").val(data.ph);
+
+                var selectedTrades = [
+                    { id: data.trades1.tradeCode, name: data.trades1.tradeName }
+                ];
+
+                if( data.trades2!=null)
+                    selectedTrades.push({ id: data.trades2.tradeCode, name: data.trades2.tradeName });
+                if(data.trades2!=null)
+                    selectedTrades.push( { id: data.trades3.tradeCode, name: data.trades3.tradeName });
+
+    var selectedTradesDropdown = $('#selectedTradesDropdown');
+    console.log(selectedTradesDropdown);
+    selectedTradesDropdown.empty(); // Clear previous options
+
+    // Add options for selected trades
+    for (var i = 0; i < selectedTrades.length; i++) {
+  var option = $('<option></option>').text(selectedTrades[i].name);
+  option.val(selectedTrades[i].id);
+  selectedTradesDropdown.append(option);
+}
+                      console.log(data);
+                  },
+    error: function(xhr, status, error) {
+    console.log(xhr.responseText);
+    alert(xhr.responseText);
+  }
+              });
+          }
+    function onClickGetName() {
+    var id = $("#applicationNumberInput").val();
+    console.log("ApplicantionNumber:" + id)
+    getDetails(id);
+}
+
+
+$(document).ready(function() {
+  $("#add-to-merit-list-btn").click(function() {
+    // Get form field values
+    var applicationNumber = $("#applicationNumberInput").val();
+    var centerId = $("#centerId").val();
+    var category = $('input[name=qualifyingCategory]:checked').val();
+    var ph = $('input[name=ph]:checked').val();
+    var selectedTrade = $('#selectedTradesDropdown option:selected').val();
+
+    if (!applicationNumber || !centerId || !selectedTrade || !category || !ph) {
+      alert("Please fill in all the required fields.");
+      return;
+    }
+
+    var data = {
+      applicationNumber: applicationNumber,
+      selectedITI: centerId,
+      selectedReservation: category,
+      selectedPh: ph,
+      selectedTrade: selectedTrade
+    };
+
+    console.log(data);
+
+    // Perform AJAX request
+   $.ajax({
+  type: "POST",
+  url: "addMeritList",
+  data: JSON.stringify(data),
+  contentType: "application/json",
+  success: function(response) {
+    console.log("Merit list added successfully");
+    console.log(response);
+    alert(response);
+
+    // Clear the form fields
+    $('#applicationNumberInput').val('');
+    $('#applicantName').val('');
+    $('#centerName').val('');
+    $('#centerId').val('');
+    $('input[name=qualifyingCategory]').prop('checked', false);
+    $('input[name=ph][value="NO"]').prop('checked', true);
+    var selectedTradesDropdown = $('#selectedTradesDropdown');
+    selectedTradesDropdown.empty();
+  },
+  error: function(xhr, status, error) {
+    console.error("Error adding merit list:", error);
+    console.log(xhr.responseText);
+    alert(xhr.responseText);
+
+    // Clear the form fields
+    $('#applicationNumberInput').val('');
+    $('#applicantName').val('');
+    $('#centerName').val('');
+    $('#centerId').val('');
+    $('input[name=qualifyingCategory]').prop('checked', false);
+    $('input[name=ph][value="NO"]').prop('checked', true);
+    var selectedTradesDropdown = $('#selectedTradesDropdown');
+    selectedTradesDropdown.empty();
+  }
+});
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+</div>
+<!-- ============================================================== -->
+<!-- End Container fluid  -->
+<!-- ============================================================== -->
+</body>
+</html>

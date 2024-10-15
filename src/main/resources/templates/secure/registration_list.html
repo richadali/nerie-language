@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:include="layouts/adminlayout.html">
+<head>
+    <!-- Include required CSS and JS files -->
+
+</head>
+<body>
+
+<!-- ============================================================== -->
+<!-- Container fluid  -->
+<!-- ============================================================== -->
+
+<div class="container" th:fragment="content">
+    <!-- ============================================================== -->
+    <!-- Start Page Content -->
+    <!-- ============================================================== -->
+    <!-- basic table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <h4 class="card-title">Registered Candidates</h4>
+                        <div class="ms-auto">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <form>
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+
+                                    <select id="itiSelect" class="form-select">
+                                        <option selected disabled>Select ITI</option>
+                                        <option th:each="center : ${getCenters}" th:value="${center.centerId}"
+                                                th:text="${center.centerName}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+
+                                    <select id="tradeSelect" class="form-select" disabled>
+                                        <option selected disabled>Select Trade</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="submit" name="submit" value="View List" class="btn btn-primary">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="loader" class="d-none" style="display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5" style="display: none" id="tableContainer">
+
+                        <div class="table-responsive">
+                            <table id="zero_config"
+                                   class="table border table-striped table-bordered table-hover text-nowrap">
+                                <thead class="bg-info text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>App No</th>
+                                    <th>Name</th>
+                                    <th>DOB</th>
+                                    <th>Gender</th>
+                                    <th>Address</th>
+                                    <th>Action</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody class="border border-info">
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- View Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fw-bold text-dark" id="exampleModalLabel"><span id="applicantNameTitle"></span>'s Application
+                    </h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body container">
+                    <img class="img-thumbnail border border-dark" id="photoImage" src="" alt="Photograph" width="15%">
+                    <h4 class="text-dark mt-3">Personal Details:</h4>
+                    <div class="row container mt-3 pb-5">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="applicationNumber">Application Number</label>
+                                <input id="applicationNumber" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group pb-3">
+                                <label for="fatherName">Father's Name</label>
+                                <input id="fatherName" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group pb-3">
+                                <label for="gender">Gender</label>
+                                <input id="gender" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="category">Category</label>
+                                <input id="category" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="maritalStatus">Marital Status</label>
+                                <input id="maritalStatus" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="email">Email</label>
+                                <input id="email" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="mobileNumber">Mobile Number</label>
+                                <input id="mobileNumber" class="form-control" readonly>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="centerName">Center Name</label>
+                                <input id="centerName" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="motherName">Mother's Name</label>
+                                <input id="motherName" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="dob">Date of Birth</label>
+                                <input id="dob" class="form-control" readonly>
+                            </div>
+
+
+                            <div class="form-group pb-3">
+                                <label for="tribe">Tribe</label>
+                                <input id="tribe" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="religion">Religion</label>
+                                <input id="religion" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group pb-3">
+                                <label for="motherTongue">Mother Tongue</label>
+                                <input id="motherTongue" class="form-control" readonly>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <h4 class="text-dark">Address (Permanent):</h4>
+                    <div class="row container mt-3 pb-5">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="statePerm">State</label>
+                                <input id="statePerm" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group pb-3">
+                                <label for="townPerm">Town</label>
+                                <input id="townPerm" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="addressPerm">Address</label>
+                                <textarea id="addressPerm" class="form-control" readonly></textarea>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="districtPerm">District</label>
+                                <input id="districtPerm" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="pincodePerm">Pincode</label>
+                                <input id="pincodePerm" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-dark">Address (Correspondence):</h4>
+                    <div class="row container mt-3 pb-5">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="stateCorr">State</label>
+                                <input id="stateCorr" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group pb-3">
+                                <label for="townCorr">Town</label>
+                                <input id="townCorr" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="addressCorr">Address</label>
+                                <textarea id="addressCorr" class="form-control" readonly></textarea>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="districtCorr">District</label>
+                                <input id="districtCorr" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="pincodeCorr">Pincode</label>
+                                <input id="pincodeCorr" class="form-control" readonly>
+                            </div>
+
+                        </div>
+                    </div>
+                    <h4 class="text-dark">Bank Details:</h4>
+                    <div class="row container mt-3 pb-5">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="accountNumber">Account Number</label>
+                                <input id="accountNumber" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="ifscCode">IFSC Code</label>
+                                <input id="ifscCode" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="bankName">Bank Name</label>
+                                <input id="bankName" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-dark">Trades Selected:</h4>
+                    <div class="row container mt-3 pb-5">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="preferenceOne">First Preference</label>
+                                <input id="preferenceOne" class="form-control" readonly>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="preferenceTwo">Second Preference</label>
+                                <input id="preferenceTwo" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="preferenceThree">Third Preference</label>
+                                <input id="preferenceThree" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Application</h3>
+                    </h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Personal Details:</h4>
+                    <div class="row container mt-3 pb-5">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editapplicantName">Applicant Name</label>
+                                <input id="editapplicantName" class="form-control">
+                                <input type="hidden" id="editapplicationNumber" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group pb-3">
+                                <label for="editfatherName">Father's Name</label>
+                                <input id="editfatherName" class="form-control">
+                            </div>
+
+                            <div class="form-group pb-3">
+                                <label for="editgender">Gender</label>
+                                <select id="editgender" class="form-control">
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="T">Transgender</option>
+                                </select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editcategory">Category</label>
+                                <select id="editcategory" class="form-control">
+                                    <option value="GEN">General</option>
+                                    <option value="ST">ST</option>
+                                    <option value="SC">SC</option>
+                                    <option value="OBC">OBC</option>
+                                </select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editmaritalStatus">Marital Status</label>
+                                <select id="editmaritalStatus" class="form-control">
+                                    <option value="M">Married</option>
+                                    <option value="D">Divorced/Seperated</option>
+                                    <option value="W">Widowed/Widower</option>
+                                    <option value="S">Single</option>
+                                </select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editemail">Email</label>
+                                <input id="editemail" class="form-control" disabled>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editmobileNumber">Mobile Number</label>
+                                <input id="editmobileNumber" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editcenterName">Center Name</label>
+                                <input id="editcenterName" class="form-control" disabled>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editmotherName">Mother's Name</label>
+                                <input id="editmotherName" class="form-control">
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editdob">Date of Birth</label>
+                                <input type="date" id="editdob" class="form-control">
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="edittribe">Tribe</label>
+                                <select id="edittribe" class="form-control">
+                                    <option value="1">KHASI</option>
+                                    <option value="2">GARO</option>
+                                    <option value="3">JAINTIA</option>
+                                    <option value="4">OTHER</option>
+                                    <option value="0">N/A</option>
+                                </select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editreligion">Religion</label>
+                                <select id="editreligion" class="form-control">
+                                    <option value="2">Christianity</option>
+                                    <option value="1">Buddhism</option>
+                                    <option value="3">Hinduism</option>
+                                    <option value="4">Islam</option>
+                                    <option value="5">Jainism</option>
+                                    <option value="6">Sikhism</option>
+                                    <option value="99">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editmotherTongue">Mother Tongue</label>
+                                <input id="editmotherTongue" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Address (Permanent):</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editstatePerm">State</label>
+                                <input id="editstatePerm" class="form-control" disabled>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="edittownPerm">Town</label>
+                                <input id="edittownPerm" class="form-control">
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editaddressPerm">Address</label>
+                                <textarea id="editaddressPerm" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editdistrictPerm">District</label>
+                                <select id="editdistrictPerm" class="form-control"></select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editpincodePerm">Pincode</label>
+                                <input id="editpincodePerm" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Address (Correspondence):</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editstateCorr">State</label>
+                                <input id="editstateCorr" class="form-control" disabled>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="edittownCorr">Town</label>
+                                <input id="edittownCorr" class="form-control">
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editaddressCorr">Address</label>
+                                <textarea id="editaddressCorr" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editdistrictCorr">District</label>
+                                <select id="editdistrictCorr" class="form-control"></select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editpincodeCorr">Pincode</label>
+                                <input id="editpincodeCorr" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Bank Details:</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editaccountNumber">Account Number</label>
+                                <input id="editaccountNumber" class="form-control">
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editifscCode">IFSC Code</label>
+                                <input id="editifscCode" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editbankName">Bank Name</label>
+                                <input id="editbankName" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Trades Selected:</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editpreferenceOne">First preference</label>
+                                <input id="editpreferenceOne" class="form-control" disabled>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="editpreferenceTwo">Second Preference</label>
+                                <input id="editpreferenceTwo" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-3">
+                                <label for="editpreferenceThree">Third Preference</label>
+                                <input id="editpreferenceThree" class="form-control" disabled>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveButton">Save Changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+<!-- ============================================================== -->
+<!-- End PAge Content -->
+<!-- ============================================================== -->
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Get references to the select boxes
+        var itiSelect = $('#itiSelect');
+        var tradeSelect = $('#tradeSelect');
+
+        // Add an event listener to the ITI select box
+        itiSelect.on('change', function() {
+            var selectedITI = itiSelect.val();
+            populateTradeSelect(selectedITI);
+        });
+
+        function populateTradeSelect(selectedITI) {
+    // Disable the trade select box
+    tradeSelect.prop('disabled', true);
+
+    // Clear existing options except the first one
+    tradeSelect.find('option:not(:first)').remove();
+
+    // Make an AJAX request to fetch the trades based on the selected ITI
+    $.ajax({
+        url: 'api/getCenterTradesByCenterId/' + selectedITI,
+        method: 'GET',
+        success: function(response) {
+                    // Process the response and populate the trade select box
+                    response.forEach(function(trade) {
+                        tradeSelect.append($('<option></option>')
+                            .val(trade.tradeId.tradeCode)
+                            .text(trade.tradeId.tradeName));
+                    });
+
+                    // Enable the trade select box
+                    tradeSelect.prop('disabled', false);
+                },
+                error: function() {
+                    console.error('Error fetching trades.');
+                }
+            });
+        }
+    });
+
+
+$(document).ready(function() {
+        var table = $('#zero_config').DataTable({
+        dom: 'Bfrtip',
+            buttons: [
+            {
+                extend: 'pdfHtml5',
+                customize: function(doc) {
+                    // Set page size to A4 landscape
+                    doc.pageSize = 'A4';
+                    doc.pageOrientation = 'landscape';
+
+                    // Remove the "exported data" heading
+                    doc.content.splice(0, 1);
+
+                    // Add selected ITI and Trade as headings
+                    var selectedITI = $('#itiSelect option:selected').text();
+                    var selectedTrade = $('#tradeSelect option:selected').text();
+                    var headings = 'All Registered Applicants in ' + selectedITI + ' for Trade - ' + selectedTrade;
+                     doc.content.splice(0, 0, { text: headings, fontSize: 14, bold: true, margin: [0, 0, 0, 10] });
+
+                     // Update the serial number (slno) in the exported PDF
+                    var rowCount = doc.content[1].table.body.length;
+                    for (var row = 1; row < rowCount; row++) { // Start from row 1 to skip the heading row
+                        doc.content[1].table.body[row][0].text = row;
+                    }
+
+
+                    // Add custom styling (margin) to the table cells in the exported PDF
+                    var rowCount = doc.content[1].table.body.length;
+                    for (var row = 0; row < rowCount; row++) {
+                        var columnCount = doc.content[1].table.body[row].length;
+                        for (var col = 0; col < columnCount; col++) {
+                            var cell = doc.content[1].table.body[row][col];
+                            if (cell) {
+                                cell.margin = [5, 5, 5, 5]; // Set margin for each cell [top, right, bottom, left]
+                            }
+                        }
+                    }
+                },
+                exportOptions: {
+                    columns: ':visible:not(:nth-last-child(2)):not(:last-child)'
+
+                }
+            }
+            ],
+                    "rowCallback": function (row, data, index) {
+                        var api = this.api();
+                        var startIndex = api.context[0]._iDisplayStart;
+                        var pageSize = api.context[0]._iDisplayLength;
+                        var currentPage = Math.floor(startIndex / pageSize);
+                        var rowNumber = index + 1 + currentPage * pageSize;
+
+                        $('td:eq(0)', row).html(rowNumber);
+                    }
+        });
+        table.order([1, 'asc']).draw();
+
+    function populateCandidateTable(selectedITI, selectedTrade) {
+    tableContainer.style.display = "none";
+     document.getElementById("loader").classList.remove("d-none");
+
+        // Clear the table body
+        table.clear().draw();
+
+
+        // Make an AJAX request to fetch the candidates with the selected ITI and trade
+        $.ajax({
+            url: 'getApplicationByCenterIdAndTradeId/' + selectedITI + '/' + selectedTrade,
+            method: 'GET',
+            success: function(response) {
+            document.getElementById("loader").classList.add("d-none");
+            console.log(response);
+            if (response && response.length > 0) {
+                // Process the response and populate the candidate table
+                response.forEach(function(candidate, index) {
+                console.log(index);
+                    var row = [
+                        index,
+                        '<button onclick="abc(\'' + candidate.applicationnumber + '\')" class="btn btn-primary btn-sm view-details" data-bs-toggle="modal" data-bs-target="#exampleModal">' + candidate.applicationnumber + '</button>', // App No column with button
+                        candidate.applicantname.toUpperCase(),
+                        candidate.dob,
+                        candidate.gender.genderName.toUpperCase(),
+                        candidate.addressperm.toUpperCase() + '<br>Town: ' + candidate.townperm.toUpperCase() + '<br>Pin: ' +candidate.pincodeperm + '<br>' + candidate.districts.toUpperCase()+ ', '+candidate.states,
+                        '<button onclick="abc(\'' + candidate.applicationnumber + '\')" class="btn btn-primary btn-sm view-edit" data-bs-toggle="modal" data-bs-target="#exampleModal">View</button>',
+                        '<button onclick="editApplicant(\'' + candidate.applicationnumber + '\')" class="btn btn-primary btn-sm view-edit" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>'
+                    ];
+                    table.row.add(row).draw(false);
+                    var tableContainer = document.getElementById("tableContainer");
+                    tableContainer.style.display = "block";
+                });
+                } else{
+                // Handle the case when the response is empty
+                var tableContainer = document.getElementById("tableContainer");
+                tableContainer.style.display = "none"; // Hide the table container
+                alert("No Applications found for the selected ITI and trade.");
+            }
+            },
+            error: function() {
+                console.error('Error fetching candidates.');
+                document.getElementById("loader").classList.add("d-none");
+            }
+        });
+    }
+
+    // Add an event listener to the form submission
+    $('form').on('submit', function(event) {
+        event.preventDefault();
+
+        var selectedITI = $('#itiSelect').val();
+        var selectedTrade = $('#tradeSelect').val();
+        populateCandidateTable(selectedITI, selectedTrade);
+    });
+});
+
+
+    function abc(id) {
+        console.log("inside abc");
+
+
+        $.ajax({
+            type: "GET",
+            url: "application_no",
+            data: "id="+id,
+            success: function (data) {
+                $("#applicationNumber").val(data.applicationnumber);
+                $("#centerName").val(data.centers.centerName);
+                var applicantName = data.applicantname;
+                document.getElementById("applicantNameTitle").textContent = applicantName;
+                $("#fatherName").val(data.fathername);
+                $("#motherName").val(data.mothername);
+                $("#gender").val(data.gender.genderName);
+                $("#dob").val(data.dob);
+                $("#category").val(data.categories.categoryName);
+                $("#religion").val(data.religions.religionName);
+
+                // Check if tribes object exists before accessing properties
+                if (data.tribes) {
+                    $("#tribe").val(data.tribes.tribeName);
+                } else {
+                    $("#tribe").val("N/A");
+                }
+
+                $("#maritalStatus").val(data.maritalStatus.maritalStatus);
+                $("#motherTongue").val(data.mothertongue);
+                $("#mobileNumber").val(data.mobilenumber);
+                if (data.photograph) {
+                    var photoImg = document.getElementById("photoImage");
+                    photoImg.src = "data:image/png;base64," + data.photograph;
+                    photoImg.alt = "Photograph"; // Add alt text for accessibility
+                }
+                $("#highestQualification").val(data.highestQualification.qualificationName);
+                $("#email").val(data.email);
+                $("#statePerm").val(data.states.name);
+                $("#districtPerm").val(data.districts.name);
+                $("#townPerm").val(data.townperm);
+                $("#addressPerm").val(data.addressperm);
+                $("#pincodePerm").val(data.pincodeperm);
+                $("#stateCorr").val(data.statescorr.name);
+                $("#districtCorr").val(data.districtscorr.name);
+                $("#townCorr").val(data.towncorr);
+                $("#addressCorr").val(data.addresscorr);
+                $("#pincodeCorr").val(data.pincodecorr);
+                $("#accountNumber").val(data.accountnumber);
+                $("#ifscCode").val(data.ifsccode);
+                $("#bankName").val(data.bankname);
+                $("#instituteTenth").val(data.institutetenth);
+                $("#boardTenth").val(data.boardtenth);
+                $("#yearPassingTenth").val(data.yearpassingtenth);
+                $("#percentageTenth").val(data.percentagetenth);
+                $("#divisionTenth").val(data.divisiontenth);
+                $("#subjectsTenth").val(data.subjectstenth);
+                $("#havePassedBoth").val(data.haveyoupassedboth);
+                $("#marksMaths").val(data.marksmaths);
+                $("#marksScience").val(data.marksscience);
+                $("#instituteEight").val(data.instituteeight);
+                $("#boardEight").val(data.boardeight);
+                $("#yearPassingEight").val(data.yearpassingeight);
+                $("#percentageEight").val(data.percentageeight);
+                $("#divisionEight").val(data.divisioneight);
+                $("#subjectsEight").val(data.subjectseight);
+                $("#preferenceOne").val(data.trades1.tradeName);
+                $("#preferenceTwo").val(data.trades2 ? data.trades2.tradeName : '');
+                $("#preferenceThree").val(data.trades3 ? data.trades3.tradeName : '');
+                $("#submissionDate").val(data.submissiondatte);
+                $("#ph").val(data.ph);
+
+                console.log(data);
+            },
+            error: function (data) {
+                console.log("Error");
+            }
+        });
+    }
+
+
+    function populateDistricts(selectedDistrictId, selectedDistrictCorrId) {
+        console.log("inside populateDistricts");
+        $.ajax({
+            method: "GET",
+            url: "getDistricts",
+            success: function (data) {
+                // Assuming the API returns an array of district objects,
+                // you can loop through the data and create options for the dropdown
+                var editdistrictSelect = $("#editdistrictPerm");
+                var editdistrictCorrSelect = $("#editdistrictCorr");
+
+            // Clear existing options from the dropdowns
+            editdistrictSelect.empty();
+            editdistrictCorrSelect.empty();
+
+            // Add an initial "Select District" option to both dropdowns
+            editdistrictSelect.append($('<option>').val('').text('Select District'));
+            editdistrictCorrSelect.append($('<option>').val('').text('Select District'));
+
+            // Loop through the data and add options to both dropdowns
+            data.forEach(function (district) {
+                var option = $("<option>").attr("value", district.id).text(district.name);
+                editdistrictSelect.append(option);
+                editdistrictCorrSelect.append(option.clone()); // Clone the option for the districtCorr dropdown
+            });
+
+            // Set the selected districts as the default selected options in the dropdowns
+            if (selectedDistrictId) {
+                editdistrictSelect.val(selectedDistrictId);
+            }
+            if (selectedDistrictCorrId) {
+                editdistrictCorrSelect.val(selectedDistrictCorrId);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log("Error fetching districts:", xhr.responseText);
+        }
+    });
+}
+
+
+function editApplicant(id) {
+        console.log("inside editApplicant");
+        $.ajax({
+            type: "GET",
+            url: "application_no",
+            data: "id="+id,
+            success: function (data) {
+                $("#editapplicationNumber").val(data.applicationnumber);
+                $("#editapplicantName").val(data.applicantname);
+                $("#editcenterName").val(data.centers.centerName);
+                $("#editcenterId").val(data.centers.centerId);
+                $("#editfatherName").val(data.fathername);
+                $("#editmotherName").val(data.mothername);
+                $("#editgender").val(data.gender.genderId);
+                $("#editdob").val(data.dob);
+                $("#editcategory").val(data.categories.categoryId);
+                $("#editreligion").val(data.religions.religionId);
+
+                // Check if tribes object exists before accessing properties
+                if (data.tribes) {
+                    $("#edittribe").val(data.tribes.tribeId);
+                } else {
+                    $("#edittribe").val("0");
+                }
+
+                $("#editmaritalStatus").val(data.maritalStatus.maritalStatusId);
+                $("#editmotherTongue").val(data.mothertongue);
+                $("#editmobileNumber").val(data.mobilenumber);
+                $("#editemail").val(data.email);
+                $("#editstatePerm").val(data.states.name);
+                $("#edittownPerm").val(data.townperm);
+                $("#editaddressPerm").val(data.addressperm);
+                $("#editpincodePerm").val(data.pincodeperm);
+                $("#editstateCorr").val(data.statescorr.name);
+                $("#edittownCorr").val(data.towncorr);
+                $("#editaddressCorr").val(data.addresscorr);
+                $("#editpincodeCorr").val(data.pincodecorr);
+                $("#editaccountNumber").val(data.accountnumber);
+                $("#editifscCode").val(data.ifsccode);
+                $("#editbankName").val(data.bankname);
+                $("#editpreferenceOne").val(data.trades1.tradeName);
+                $("#editpreferenceTwo").val(data.trades2.tradeName);
+                $("#editpreferenceThree").val(data.trades3.tradeName);
+
+
+                var selectedDistrictId = data.districts.id;
+                var selectedDistrictCorrId = data.districtscorr.id;
+                populateDistricts(selectedDistrictId, selectedDistrictCorrId);
+
+                console.log(data);
+            },
+            error: function (data) {
+                console.log("Error");
+            }
+        });
+    }
+
+    $("#saveButton").on("click", function() {
+    // Get the updated values from the input fields
+    var applicationNumber = $("#editapplicationNumber").val();
+    var applicantName = $("#editapplicantName").val();
+    var fatherName = $("#editfatherName").val();
+    var motherName = $("#editmotherName").val();
+    var gender = $("#editgender").val();
+    var dob = $("#editdob").val();
+    var category = $("#editcategory").val();
+    var religion = $("#editreligion").val();
+    var tribe = $("#edittribe").val();
+    var maritalStatus = $("#editmaritalStatus").val();
+    var motherTongue = $("#editmotherTongue").val();
+    var districtPerm = $("#editdistrictPerm").val();
+    var townPerm = $("#edittownPerm").val();
+    var addressPerm = $("#editaddressPerm").val();
+    var pincodePerm = $("#editpincodePerm").val();
+    var districtCorr = $("#editdistrictCorr").val();
+    var townCorr = $("#edittownCorr").val();
+    var addressCorr = $("#editaddressCorr").val();
+    var pincodeCorr = $("#editpincodeCorr").val();
+    var accountNumber = $("#editaccountNumber").val();
+    var ifscCode = $("#editifscCode").val();
+    var bankName = $("#editbankName").val();
+
+
+    // Create the data object
+    var data = {
+        applicationnumber: applicationNumber,
+        applicantname: applicantName,
+        fathername: fatherName,
+        mothername: motherName,
+        gender: gender,
+        dob: dob,
+        categories: category,
+         religions: religion,
+         tribes: tribe,
+         maritalStatus: maritalStatus,
+         mothertongue: motherTongue,
+         districts: districtPerm,
+         townperm: townPerm,
+         addressperm: addressPerm,
+         pincodeperm: pincodePerm,
+         districtscorr: districtCorr,
+         towncorr: townCorr,
+         addresscorr: addressCorr,
+         pincodecorr: pincodeCorr,
+         accountnumber: accountNumber,
+         ifsccode: ifscCode,
+         bankname: bankName,
+    };
+    console.log(data);
+
+    // Perform the AJAX request
+    $.ajax({
+        method: "PUT",
+        url: "editApplicationDetails",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function(response) {
+            // Handle the success response
+            console.log(data);
+            console.log("Details updated successfully");
+            // Close the Edit modal
+<!--            $("#editModal").hide();-->
+            alert("Application updated successfully");
+            window.location.reload();
+
+        },
+        error: function() {
+            // Handle the error response
+            console.log("Error updating details");
+        }
+    });
+});
+
+
+$(document).ready(function () {
+        populateDistricts();
+    });
+
+</script>
+
+
+</div>
+<!-- ============================================================== -->
+<!-- End Container fluid  -->
+<!-- ============================================================== -->
+</body>
+</html>
